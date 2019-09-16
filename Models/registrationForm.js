@@ -19,6 +19,12 @@ const registrationForm = mongoose.Schema({
     max: 255,
     min: 6
   },
+  password: {
+    type: String,
+    required: true,
+    max: 1024,
+    min: 6
+  },
   email: {
     type: String,
     required: true,
@@ -35,12 +41,6 @@ const registrationForm = mongoose.Schema({
     required: true,
     max: 255,
     min: 10
-  },
-  password: {
-    type: String,
-    required: true,
-    max: 1024,
-    min: 6
   },
   date: {
     type: Date,
