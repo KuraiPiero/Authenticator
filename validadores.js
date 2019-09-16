@@ -1,54 +1,54 @@
 const Joi = require("@hapi/joi");
 
 //Registration Validator
-const registrationValidator = data => {
-  const schema = Joi.object({
-    firstName: Joi.string()
+const validadorDeRegistro = data => {
+  const esquema = Joi.object({
+    primerNombre: Joi.string()
       .alphanum()
       .min(3)
       .max(30)
       .required(),
-    lastName: Joi.string()
+    apellido: Joi.string()
       .alphanum()
       .min(3)
       .max(30)
       .required(),
-    userName: Joi.string()
+    claveUsuario: Joi.string()
       .pattern(/^[a-zA-Z0-9]{3,30}$/)
       .min(3)
       .max(30)
       .required(),
-    password: Joi.string().pattern(/^[a-zA-Z0-9]{3,30}$/),
+    contraseña: Joi.string().pattern(/^[a-zA-Z0-9]{3,30}$/),
     email: Joi.string().email({
       minDomainSegments: 2,
       tlds: { allow: ["com", "net"] }
     }),
-    genre: Joi.string()
+    genero: Joi.string()
       .alphanum()
       .min(3)
       .max(30)
       .required(),
-    adress: Joi.string()
+    direccion: Joi.string()
       .min(3)
       .max(30)
       .required()
   });
-  return schema.validate(data);
+  return esquema.validate(data);
 };
 
 //Login Validator
 
-const loginValidator = data => {
-  const schema = Joi.object({
-    userName: Joi.string()
+const validadorDeSesion = data => {
+  const esquema = Joi.object({
+    claveUsuario: Joi.string()
       .pattern(/^[a-zA-Z0-9]{3,30}$/)
       .min(3)
       .max(30)
       .required(),
-    password: Joi.string().pattern(/^[a-zA-Z0-9]{3,30}$/)
+    contraseña: Joi.string().pattern(/^[a-zA-Z0-9]{3,30}$/)
   });
-  return schema.validate(data);
+  return esquema.validate(data);
 };
 
-module.exports.registrationValidator = registrationValidator;
-module.exports.loginValidator = loginValidator;
+module.exports.validadorDeRegistro = validadorDeRegistro;
+module.exports.validadorDeSesion = validadorDeSesion;

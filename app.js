@@ -9,10 +9,10 @@ app.use(bodyParser.json());
 dotenv.config();
 
 const authRoute = require("./Routes/Auth");
-app.use("/api/user", authRoute);
+app.use("/api/usuarios", authRoute);
 
 app.get("/api", (req, res) => {
-  res.send("Entering Piero Letters");
+  res.send("Entrando a Cartas a Piero");
 });
 
 //TODO Mongo Connection
@@ -23,9 +23,9 @@ mongoose.connect(
     useUnifiedTopology: true
   },
   () => {
-    console.log("connect to DB");
+    console.log("Conectado a la base de datos");
   }
 );
 
 //?Server Listener
-app.listen(10000, () => console.log("Server Running"));
+app.listen(10000, () => console.log("servidor funcionando"));

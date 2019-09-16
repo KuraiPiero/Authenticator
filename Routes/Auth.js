@@ -1,34 +1,35 @@
 const router = require("express").Router();
-const User = require("../models/registrationForm");
-const { registrationValidator } = require("../validator");
+const Usuario = require("../Models/formularioDeRegistro");
+const { validadorDeRegistro } = require("../validadores");
 router.get("/", (req, res) => {
-  res.send("Entering registration");
+  res.send("entrando a registro");
 });
 
-router.post("/userreg", async (req, res) => {
-  const { error } = registrationValidator(req.body);
+router.post("/usreg", async (req, res) => {
+  const { error } = validadorDeRegistro(req.body);
   if (error) return res.status(400).send(error.details[0].message);
 
-  const user = new User({
-    firstName: req.body.firstName,
-    lastName: req.body.lastName,
-    userName: req.body.userName,
+  //
+  const usuario = new Usuario({
+    primerNombre: req.body.primerNombre,
+    apellido: req.body.apellido,
+    claveUsuario: req.body.claveUsuario,
+    contraseña: req.body.contraseña,
     email: req.body.email,
-    genre: req.body.genre,
-    adress: req.body.adress,
-    password: req.body.password,
-    date: req.body.date
+    genero: req.body.genero,
+    direccion: req.body.direccion,
+    fecha: req.body.fecha
   });
-  console.log(user);
+  console.log(usuario);
   try {
-    const usersave = await user.save();
+    const salvarUsuario = await usuario.save();
     res.send({
-      usersave
+      salvarUsuario
     });
   } catch (err) {
     res.status(400).send(err);
   }
-  console.log("Registered");
+  console.log("Registrado");
 });
 
 router.post("/userlog", (req, res) => {
