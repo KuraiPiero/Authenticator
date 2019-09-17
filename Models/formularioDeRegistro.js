@@ -13,7 +13,7 @@ const formularioDeRegistro = mongoose.Schema({
     max: 255,
     min: 6
   },
-  claveUsuario: {
+  claveDeUsuario: {
     type: String,
     required: true,
     max: 255,
@@ -25,7 +25,7 @@ const formularioDeRegistro = mongoose.Schema({
     max: 1024,
     min: 6
   },
-  email: {
+  correo: {
     type: String,
     required: true,
     max: 255,

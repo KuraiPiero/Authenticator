@@ -13,13 +13,13 @@ const validadorDeRegistro = data => {
       .min(3)
       .max(30)
       .required(),
-    claveUsuario: Joi.string()
+    claveDeUsuario: Joi.string()
       .pattern(/^[a-zA-Z0-9]{3,30}$/)
       .min(3)
       .max(30)
       .required(),
     contraseña: Joi.string().pattern(/^[a-zA-Z0-9]{3,30}$/),
-    email: Joi.string().email({
+    correo: Joi.string().email({
       minDomainSegments: 2,
       tlds: { allow: ["com", "net"] }
     }),
@@ -40,7 +40,7 @@ const validadorDeRegistro = data => {
 
 const validadorDeSesion = data => {
   const esquema = Joi.object({
-    claveUsuario: Joi.string()
+    claveDeUsuario: Joi.string()
       .pattern(/^[a-zA-Z0-9]{3,30}$/)
       .min(3)
       .max(30)
