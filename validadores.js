@@ -41,7 +41,7 @@ const validadorDeRegistro = data => {
 const validadorDeSesion = data => {
   const esquema = Joi.object({
     claveDeUsuario: Joi.string()
-      .pattern(/^[a-zA-Z0-9]{3,30}$/)
+
       .min(3)
       .max(30)
       .required(),

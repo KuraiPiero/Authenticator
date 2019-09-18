@@ -1,34 +1,54 @@
+//TODO ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////Llamada de modulos////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 const router = require("express").Router();
-const Usuario = require("../Models/formularioDeRegistro");
-const { validadorDeRegistro } = require("../validadores");
-router.get("/", (req, res) => {
+const Usuario = require("../Models/formularios");
+const { validadorDeRegistro, validadorDeSesion } = require("../validadores");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+
+//TODO //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////mensaje de verificacion////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+router.get("/usreg", (req, res) => {
   res.send("entrando a registro");
 });
 
+router.get("/uslog", (req, res) => {
+  res.send("entrando a registro");
+});
+//TODO //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////Registro de Usuario////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 router.post("/usreg", async (req, res) => {
-  //Validador de registro
+  //? ////////////////////////////////Validador de registro/////////////////////////////////////////////
   const { error } = validadorDeRegistro(req.body);
   if (error) return res.status(400).send(error.details[0].message);
 
-  //validar si el usuario existe
+  //? ////////////////////////////////validador si el usuario existe////////////////////////////////////
+
   const usuarioExistente = await Usuario.findOne({
-    claveUsuario: req.body.claveUsuario
+    claveDeUsuario: req.body.claveDeUsuario
   });
   if (usuarioExistente)
     return res.status(400).send("Este usuario ya esta registrado");
 
-  //validar si el correo existe
+  ///? ///////////////////////////validar si el correo existe///////////////////////////////////////////
+
   const correoExistente = await Usuario.findOne({
     correo: req.body.correo
   });
-  if (correoExistente) return res.status(400).send("Este core ya esta en uso");
+  if (correoExistente)
+    return res.status(400).send("Este correo ya esta en uso");
 
-  //crear un nuevo usuario
+  //? a///////////////////////////////////Encriptar contraseñ////////////////////////////////////////////
+
+  const sal = await bcrypt.genSalt(10);
+  const contraseñaEncriptada = await bcrypt.hash(req.body.contraseña, sal);
+
+  //? ////////////////////////////// crear un nuevo usuario/////////////////////////////////////////////
   const usuario = new Usuario({
     primerNombre: req.body.primerNombre,
     apellido: req.body.apellido,
     claveDeUsuario: req.body.claveDeUsuario,
-    contraseña: req.body.contraseña,
+    contraseña: contraseñaEncriptada,
     correo: req.body.correo,
     genero: req.body.genero,
     direccion: req.body.direccion,
@@ -38,15 +58,37 @@ router.post("/usreg", async (req, res) => {
   try {
     const salvarUsuario = await usuario.save();
     res.send({
-      salvarUsuario
+      usuario: usuario._id
     });
   } catch (err) {
     res.status(400).send(err);
   }
   console.log("Registrado");
 });
+//TODO //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////Inicio de Sesion///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-router.post("/userlog", (req, res) => {
-  res.send("register");
+router.post("/uslog", async (req, res) => {
+  const { error } = validadorDeSesion(req.body);
+  if (error) return res.status(400).send(error.details[0].message);
+
+  //? ////////////////////////////////validador si el usuario existe////////////////////////////////////
+
+  const usuario = await Usuario.findOne({
+    claveDeUsuario: req.body.claveDeUsuario
+  });
+  if (!usuario)
+    return res.status(400).send("Usuario y/o contraseña incorrectos");
+
+  //? ////////////////////////////////validador si la contraseña esta bien/////////////////////////////
+  const validarContraseña = await bcrypt.compare(
+    req.body.contraseña,
+    usuario.contraseña
+  );
+  if (!validarContraseña) return res.status(400).send("contraseña incorrectos");
+
+  //? crear y asignar una ficha
+
+  const ficha = jwt.sign({ _id: usuario._id }, process.env.TOKEN_SECRET);
+  res.header("auth-token", ficha).send(ficha);
 });
 module.exports = router;
